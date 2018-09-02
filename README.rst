@@ -1,6 +1,8 @@
 Python OneMap SG API
 ====================
 
+[![Coverage Status](https://coveralls.io/repos/github/windspeed-io/python-onemapsg/badge.svg?branch=master)](https://coveralls.io/github/windspeed-io/python-onemapsg?branch=master)
+
 Python Client for OneMapSG_.
 
 Only supports Python 3.x.
