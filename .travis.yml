@@ -1,15 +1,9 @@
 language: python
 python:
 - '3.6'
+- 3.6-dev
+- 3.7-dev
 install:
 - pip install -r requirements.txt
 script:
 - pytest
-deploy:
-  provider: pypi
-  user: windspeed
-  password:
-    secure: H51ULwoQU5/JL7+k/a8bHEcsZy2POrLcvtZgz/kn4cQLNPw7nyethMRqjW/rT726dir7nvPhy8XpiB1sHLrkc1ENMRr87TSeN1o1tmd38acbVsZzmxDE0hWSp20wpm+56Bh8LIWEuT5RxhSkjr6Z/SRYAO2wREM1IrGu2H4loodvUPk3kND29o2gBNpYKrhnJMCvGFhsLH8qc7XsjialhnYWx1YQ51gALa19r6qL0t3pff7VjLdSPPnzTEnw5d7KGGRImOfQHmngk4ga+4Kd8Cj6sLrS5pFIxQUD+gAj6vL5Xz4xPA6wZQ4f6Dpj+dJNAoc9AnWdj6SLEgQ1tYJhJeZKLWxubS2FJqUw/DB/R8mlCiCCm20GgCpPDjPRtdk5UbIlIVz/KsdFw3GdXLyfOogmH+tCCycdG9KjFf1FAwlrz7oriPhHGCjfpLhP8rtTzHp34/WnWKPMK6RTZC41DkLNotbIptnp4qQ98HFZNg3swdrUhXiseJj0Qw+XauX0wH4B9Ebq20Xpf9dHrcIJ+UGj4yHOJUravdYfFhK9VAZ/7CniQLQjKV7JsZJ/W1A1Z7ryL3SzJnlDQkkGPVAbzXXLPiTQREOIDxXCqDqY2CVo6TkEKDa0l9CjKQd3spdRZgP+dPoxZlXdX2NwrEmx3SIziOr4gWxgm8WGNZWtlNg=
-  on:
-    branch: master
-  skip_cleanup: true
