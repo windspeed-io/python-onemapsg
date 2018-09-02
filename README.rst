@@ -1,7 +1,7 @@
 Python OneMap SG API
 ====================
 
-Python Client for OneMap SG_.
+Python Client for `OneMap SG`_
 
 Only supports Python 3.x.
 
