@@ -1,7 +1,8 @@
 Python OneMap SG API
 ====================
 
-[![Coverage Status](https://coveralls.io/repos/github/windspeed-io/python-onemapsg/badge.svg?branch=master)](https://coveralls.io/github/windspeed-io/python-onemapsg?branch=master)
+.. image:: https://coveralls.io/repos/github/windspeed-io/python-onemapsg/badge.svg?branch=master
+:target: https://coveralls.io/github/windspeed-io/python-onemapsg?branch=master
 
 Python Client for OneMapSG_.
 
