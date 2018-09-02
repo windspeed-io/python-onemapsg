@@ -11,7 +11,7 @@ import inspect
 
 from . import exceptions, status, utils
 from .api import API
-from .utils import make_request
+from .utils import coerce_response, make_request
 
 
 class OneMap:
@@ -42,7 +42,9 @@ class OneMap:
         url = callback(*args, **kwargs)
         response = make_request(url)
         if response.status_code == status.HTTP_200_OK:
-            return response.data
+            cls_callback = getattr(utils, f'get_{action_type}_class')
+            cls = cls_callback()
+            return coerce_response(cls, response.data)
         elif status.is_client_error(response.status_code):
             if 'error' in response.data:
                 raise exceptions.BadRequest(response.data['error'])

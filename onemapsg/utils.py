@@ -12,9 +12,27 @@ from urllib.parse import urlencode
 import requests
 
 from onemapsg.api import API
-from onemapsg.response import Response
+from onemapsg.response import Response, RouteResult, SearchResult
 
 SAFE_METHODS = ['get', 'options']
+
+
+def to_dict(obj):
+    """Converts class instances to dictionaries.
+    Handles nested objects as well."""
+    if not hasattr(obj, '__dict__'):
+        return obj
+    result = {}
+    for key, val in obj.__dict__.items():
+        element = []
+        if not key.startswith('__'):
+            if isinstance(val, list):
+                for item in val:
+                    element.append(to_dict(item))
+            else:
+                element = to_dict(val)
+        result[key] = element
+    return result
 
 
 def make_request(endpoint, method='get',
@@ -48,6 +66,11 @@ def construct_search_query(search_val, return_geometry,
     return search_url
 
 
+def get_search_class():
+    """Returns SearchResult class."""
+    return SearchResult
+
+
 def construct_route_query(start, end, route_type,
                           public_transport_options, token):
     """Constructs route query URL compliant with OneMap's requirements."""
@@ -58,6 +81,16 @@ def construct_route_query(start, end, route_type,
     }
     if route_type == 'pt' and public_transport_options:
         route_params.update(public_transport_options)
-    route_params = urlencode(route_params, safe=',')
+    route_params = urlencode(route_params, safe=',:-')
     route_url = f'{API.route}?{route_params}&token={token}'
     return route_url
+
+
+def get_route_class():
+    """Returns RouteResult class."""
+    return RouteResult
+
+
+def coerce_response(cls, data):
+    """Creates a class object out of given response data and class."""
+    return cls(**data)

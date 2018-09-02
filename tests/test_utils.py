@@ -6,8 +6,25 @@ import pytest
 
 from onemapsg import status
 from onemapsg.response import Response
-from onemapsg.utils import (construct_route_query, construct_search_query,
-                            make_request)
+from onemapsg.utils import (
+    construct_route_query, construct_search_query, make_request, to_dict
+)
+
+
+def test_to_dict():
+    class TestClass:
+        def __init__(self, a, b, c):
+            self.a = a
+            self.b = b
+            self.c = c
+
+    obj = TestClass([1, 2, 3], {'nest': {'dictionary': 'object'}}, 'string')
+    d = to_dict(obj)
+    assert isinstance(d['a'], list)
+    assert d['a'] == [1, 2, 3]
+    assert isinstance(d['b'], dict)
+    assert d['b']['nest'] == {'dictionary': 'object'}
+    assert d['c'] == 'string'
 
 
 @patch('requests.get')
@@ -73,4 +90,20 @@ def test_construct_route_query():
                    'start=1.12,3.21&'
                    'end=1.02,1.05&'
                    'routeType=drive&'
+                   'token=sometoken')
+    opts = {
+        'date': '2018-09-01',
+        'time': '15:30:00',
+        'mode': 'BUS'
+    }
+    url = construct_route_query('1.12,3.21', '1.02,1.05', 'pt',
+                                opts, 'sometoken')
+    assert url == ('https://developers.onemap.sg/'
+                   'privateapi/routingsvc/route?'
+                   'start=1.12,3.21&'
+                   'end=1.02,1.05&'
+                   'routeType=pt&'
+                   'date=2018-09-01&'
+                   'time=15:30:00&'
+                   'mode=BUS&'
                    'token=sometoken')

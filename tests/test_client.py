@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from onemapsg import exceptions, status
+from onemapsg import exceptions, status, utils
 from onemapsg.client import OneMap
 
 
@@ -50,6 +50,7 @@ def test_client_connect_error_server_error(mock_request):
 @patch('onemapsg.client.OneMap._connect')
 @patch('onemapsg.client.make_request')
 def test_client_search(mock_request, mock_connect):
+    """Should return SearchResult instance as response."""
     mock_connect.return_value = None, None
     data = {
         'found': 5,
@@ -89,7 +90,7 @@ def test_client_search(mock_request, mock_connect):
         data=data
     )
     search_result = OneMap('email@example.com', 'password').search('307987')
-    assert search_result == data
+    assert isinstance(search_result, utils.SearchResult)
 
 
 @patch('onemapsg.client.OneMap._connect')
@@ -97,7 +98,15 @@ def test_client_search(mock_request, mock_connect):
 def test_client_search_bad_request(mock_request, mock_connect):
     mock_connect.return_value = None, None
     mock_request.return_value = MagicMock(
-        status_code=status.HTTP_400_BAD_REQUEST
+        status_code=status.HTTP_400_BAD_REQUEST,
+        data={'error': 'some client error'}
+    )
+    with pytest.raises(exceptions.BadRequest) as err:
+        OneMap('email@example.com', 'password').search('307987')
+        assert str(err) == 'some client error'
+
+    mock_request.return_value = MagicMock(
+        status_code=status.HTTP_400_BAD_REQUEST,
     )
     with pytest.raises(exceptions.BadRequest) as err:
         OneMap('email@example.com', 'password').search('307987')
@@ -114,3 +123,135 @@ def test_client_search_server_error(mock_request, mock_connect):
     with pytest.raises(exceptions.ServerError) as err:
         OneMap('email@example.com', 'password').search('307987')
         assert str(err) == 'OneMap SG server error. Please try again later.'
+
+
+@patch('onemapsg.client.OneMap._connect')
+@patch('onemapsg.client.make_request')
+def test_client_route(mock_request, mock_connect):
+    """Should return RouteResult instance."""
+    mock_connect.return_value = None, None
+    mock_request.return_value = MagicMock(
+        status_code=status.HTTP_200_OK,
+        data={
+            'status_message': 'Found route between points',
+            'alternative_names': [
+                [
+                    'COMMONWEALTH AVENUE WEST',
+                    'NORTH BUONA VISTA ROAD'
+                ]
+            ],
+            'route_name': [
+                'CLEMENTI AVENUE 2',
+                'ULU PANDAN ROAD'
+            ],
+            'route_geometry': 'yr`oAm`k{dEksAstD~e@iW`e@{UxtAqr@pd@sVrOmItC}GZ}GJwDeSmWkm@gb@qKuEyCwE}AgHJiH\\kE{BaRoCoEsGcLiE{N{AmQvB{QbFkN|E}FzMcPtQmTh|A_iBfCcDzHcKpJaMr\\w_@t\\i`@hb@gg@lAkJRqJg@wJeCoMgQ{f@qHsTuC_FiMsT_S_ViVkPkfAyi@oXiNq{@q_@qn@cU{SsGgEqAiDeAcTsGcd@eMoF{AoBi@uGkB}d@uMwDoA_EsA{QiG_VyJaSkLkQuN}CgDqJkKqDsFqE_H}CuE}CyEsBsGcDeKuK}f@}FiJ_FaEkKiEgHcAe~@xMsr@`LqMrB_En@gAy`@kBkVwE{W_^gbAkHg[aFeQaRe^_Nea@iEwYJkYsAyj@KiRkGglAcDqn@KiUrDkc@nFkY`Lo]lIeQfJgOfcAyhAzJ}KtPsTjIuQxFaQrBcN|E{u@rDgh@hBuYjDy_@zHoUbI}O|PwSkDuBiP_K{]cTq_Ack@ixAe|@_L}G{LoHynBujAsh@iZiRqK}|@ig@xg@wo@v{@_gA~q@g}@fUgZp^{`@gDqLv`@oNfTwH~LcIl@gEy@{PqU_V_`@cuAvHwJt^_MvXgMxCaD',
+            'route_instructions': [
+                [
+                    '10',
+                    'PANDAN LOOP',
+                    853,
+                    0,
+                    89,
+                    '853m',
+                    'NE',
+                    65,
+                    1,
+                    'SW',
+                    245
+                ]
+            ],
+            'alternative_summaries': [
+                {
+                    'end_point': 'REBECCA ROAD',
+                    'start_point': 'PANDAN LOOP',
+                    'total_time': 761,
+                    'total_distance': 8133
+                }
+            ],
+            'via_points': [
+                [
+                    1.311549,
+                    103.749657
+                ],
+                [
+                    1.32036,
+                    103.800156
+                ]
+            ],
+            'route_summary': {
+                'end_point': 'REBECCA ROAD',
+                'start_point': 'PANDAN LOOP',
+                'total_time': 740,
+                'total_distance': 7957
+            },
+            'found_alternative': True,
+            'status': 200,
+            'via_indices': [
+                0,
+                140
+            ],
+            'hint_data': {
+                'locations': [
+                    'NzgBANtqAQBRBQAAAAAAAAQAAAAAAAAAuQIAAEOcAABoAAAAPQMUABcYLwYAAAEB',
+                    '0OUAAF4zAQChAwAABAAAAAwAAABIAAAAdQAAACx9AABoAAAAqCUUAFndLwYCAAEB'
+                ],
+                'checksum': 585417468
+            },
+            'alternative_geometries': [
+                'yr`oAm`k{dEksAstD~e@iW`e@{UxtAqr@pd@sVrOmItC}GZ}GJwDeSmWkm@gb@qKuEyCwE}AgHJiH\\kE{BaRoCoEsGcLiE{N{AmQvB{QbFkN|E}FzMcPtQmTh|A_iBfCcDzHcKpJaMr\\w_@t\\i`@hb@gg@lAkJRqJg@wJeCoMgQ{f@qHsTuC_FiMsT_S_ViVkPkfAyi@oXiNq{@q_@qn@cU{SsGgEqA~@wEzCgOvBiLzAqM\\mG@ad@UoQmC{^eDms@e@uJoAsXgAg^MgEe@sEuD__@qLstB}@ePIsCmAiq@zA_YjG_b@nB_HpHeWdK}UdkBqqD~A{CnAcCjA{BpIoPhAyBf_@gs@rb@uz@vC{F`CcFf`@sv@bEeMvGgVzEoQ~AyRrAyRe@mQ_E_XyDuWsJo}@gJsgAwByYcAmN?eDJ}Bh@cPnDuRtKs]~Ig[g_@oGg[aJqDY{FGkOdAqH`B{VrFok@bMsIlAcJNcJm@sImB{HiDej@ig@yDmD_CyB}v@qt@_TkQpf@yv@r_@kh@lF{MlDqM`AwN[cN}BqP{Uii@iI~DsFb@ih@cPeQaPaJ_NsIwEmV}KyMiBmKg@ae@}HkP}RgDoHwCwNkFWaY{E{Hj]uDjJcJhKia@n_@qFpL}g@uHcd@tLoBm[}GmJe`@eZub@qh@uHsa@_MuMsSiOvXgMxCaD'
+            ],
+            'alternative_instructions': [
+                [
+                    [
+                        '10',
+                        'PANDAN LOOP',
+                        853,
+                        0,
+                        89,
+                        '853m',
+                        'NE',
+                        65,
+                        1,
+                        'SW',
+                        245
+                    ],
+                    [
+                        '8',
+                        'JALAN BUROH',
+                        217,
+                        9,
+                        23,
+                        '217m',
+                        'NE',
+                        50,
+                        1,
+                        'SW',
+                        230
+                    ],
+                    [
+                        '1',
+                        'WEST COAST HIGHWAY',
+                        62,
+                        14,
+                        7,
+                        '61m',
+                        'E',
+                        92,
+                        1,
+                        'W',
+                        272
+                    ]
+                ]
+            ],
+            'alternative_indices': [
+                0,
+                159
+            ]
+        }
+    )
+    route_result = OneMap('email@example.com', 'password').route(
+        '1.23,1.01',
+        '1.01,1.23',
+        'drive'
+    )
+    assert isinstance(route_result, utils.RouteResult)
