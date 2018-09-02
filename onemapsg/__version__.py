@@ -1,0 +1,7 @@
+__title__ = 'Python OneMap SG'
+__description__ = 'OneMap Python API'
+__url__ = 'https://github.com/thomasjiangcy/python-onemapsg/'
+__version__ = '0.0.0'
+__author__ = 'Thomas Jiang'
+__author_email__ = 'thomasjiangcy@gmail.com'
+__license__ = 'MIT'
