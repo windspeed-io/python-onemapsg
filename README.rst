@@ -10,7 +10,7 @@ Python OneMap SG API
 .. image:: https://badge.fury.io/py/python-onemapsg.svg
     :target: https://badge.fury.io/py/python-onemapsg
 
-Python Client for OneMapSG.
+Python Client for OneMap SG v2.
 
 Only supports Python 3.6 and up.
 
