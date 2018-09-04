@@ -4,10 +4,12 @@ from setuptools import find_packages, setup
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
+v = open(os.path.join(here, 'VERSION')).readlines()[0]
+VERSION = [x.strip() for x in v.split('=')][1]
 
 setup(
     name='python-onemapsg',
-    version='0.0.2',
+    version=VERSION,
     packages=find_packages(),
     description='Python Client for OneMap SG',
     long_description=README,

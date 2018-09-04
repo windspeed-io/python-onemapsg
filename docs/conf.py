@@ -12,7 +12,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
+import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
@@ -23,10 +23,15 @@ project = 'Python OneMap SG'
 copyright = '2018, Thomas Jiang'
 author = 'Thomas Jiang'
 
+root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+v = open(os.path.join(root, 'VERSION')).readlines()[0]
+RELEASE = [x.strip() for x in v.split('=')][1]
+VERSION = '.'.join(RELEASE.split('.')[:2])
+
 # The short X.Y version
-version = ''
+version = VERSION
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = RELEASE
 
 
 # -- General configuration ---------------------------------------------------
