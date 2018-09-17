@@ -80,10 +80,12 @@ class OneMap:
         return self.execute(name, start, end, route_type,
                             public_transport_options, self.token)
 
-    def reverse_geocode_svy21(self, location: (float, float),
-                              buffer: int=10,
-                              address_type: str='all',
-                              other_features: bool=False) -> GeocodeInfo:
+    def reverse_geocode(self,
+                        reverse_type,
+                        location,
+                        buffer: int=10,
+                        address_type: str='all',
+                        other_features: bool=False) -> GeocodeInfo:
         """
         Retrieves a building address that lies within the defined buffer/radius of the specified x, y coordinates.
 
@@ -91,7 +93,11 @@ class OneMap:
 
         Ref: https://docs.onemap.sg/#reverse-geocode-svy21
         """
+        assert reverse_type in ['svy21', 'wgs84'], (
+            '`reverse_type` can only be either `svy21` or `wgs84`.'
+        )
         name = inspect.stack()[0][3]
+        name = name + f'_{reverse_type}'
         return self.execute(name, location, self.token,
                             buffer, address_type,
                             other_features)

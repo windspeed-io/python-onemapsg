@@ -16,7 +16,7 @@ endpoints = dict(
     auth='privateapi/auth/post/getToken',
     search='commonapi/search',
     route='privateapi/routingsvc/route',
-    reverse_geocode_svy21='privateapi/commonsvc/revgeocodexy'
+    reverse_geocode='privateapi/commonsvc/revgeocodexy'
 )
 
 

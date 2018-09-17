@@ -81,7 +81,7 @@ def validate_address_type(address_type: str) -> str:
     return address_type.lower()
 
 
-def construct_reverse_geocode_svy21_query(location: (float, float),
+def construct_reverse_geocode_svy21_query(location,
                                           token: str,
                                           buffer: int=10,
                                           address_type: str='all',
@@ -96,13 +96,17 @@ def construct_reverse_geocode_svy21_query(location: (float, float),
         'otherFeatures': 'Y' if other_features else 'N'
     }
     search_params = urlencode(search_params, safe=',:-')
-    search_url = f'{API.reverse_geocode_svy21}?{search_params}'
+    search_url = f'{API.reverse_geocode}?{search_params}'
     return search_url
 
 
 def get_reverse_geocode_svy21_class() -> GeocodeInfo:
     """Returns GeocodeInfo class."""
     return GeocodeInfo
+
+
+construct_reverse_geocode_wgs84_query = construct_reverse_geocode_svy21_query
+get_reverse_geocode_wgs84_class = get_reverse_geocode_svy21_class
 
 
 def construct_route_query(start, end, route_type,

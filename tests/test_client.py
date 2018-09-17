@@ -298,7 +298,38 @@ def test_reverse_geocode_svy21(mock_request, mock_connect):
             ]
         }
     )
-    geocode_info = OneMap('email@example.com', 'password').reverse_geocode_svy21(
+    geocode_info = OneMap('email@example.com', 'password').reverse_geocode(
+        'svy21',
         (24291.97788882387, 31373.0117224489)
+    )
+    assert isinstance(geocode_info, response.GeocodeInfo)
+
+
+@patch('onemapsg.client.OneMap._connect')
+@patch('onemapsg.client.make_request')
+def test_reverse_geocode_wsg84(mock_request, mock_connect):
+    """Should return GeocodeInfo instance."""
+    mock_connect.return_value = None, None
+    mock_request.return_value = MagicMock(
+        status_code=status.HTTP_200_OK,
+        data={
+            "GeocodeInfo": [
+                {
+                    "BUILDINGNAME": "NEW TOWN PRIMARY SCHOOL",
+                    "BLOCK": "300",
+                    "ROAD": "TANGLIN HALT ROAD",
+                    "POSTALCODE": "148812",
+                    "XCOORD": "24303.327416",
+                    "YCOORD": "31333.331116",
+                    "LATITUDE": "1.2996418106402365",
+                    "LONGITUDE": "103.80011086725216",
+                    "LONGTITUDE": "103.80011086725216"
+                }
+            ]
+        }
+    )
+    geocode_info = OneMap('email@example.com', 'password').reverse_geocode(
+        'wgs84',
+        (1.3, 103.8)
     )
     assert isinstance(geocode_info, response.GeocodeInfo)

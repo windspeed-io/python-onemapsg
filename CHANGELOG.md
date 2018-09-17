@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-* Reverse Geocdoe (SVY21)
+* Reverse Geocode (SVY21)
+* Reverse Geocode (WGS84)
 
 
 ## [0.0.2] - 2018-09-03
