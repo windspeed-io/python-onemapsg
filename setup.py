@@ -4,8 +4,8 @@ from setuptools import find_packages, setup
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
-v = open(os.path.join(here, 'VERSION')).readlines()[0]
-VERSION = [x.strip() for x in v.split('=')][1]
+v = open(os.path.join(here, 'VERSION')).readlines()[3]
+VERSION = [x.strip().strip("'") for x in v.split('=')][1]
 
 setup(
     name='python-onemapsg',
