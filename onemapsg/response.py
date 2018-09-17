@@ -70,6 +70,40 @@ class SearchResult(BaseResource):
         super().__init__(**kwargs)
 
 
+class GeocodeInfoItem(BaseResource):
+
+    building_name = None
+    block = None
+    road = None
+    postal_code = None
+    coordinates = None
+    lat_long = None
+
+    def __init__(self, **kwargs):
+        self.building_name = kwargs.get('BUILDINGNAME')
+        self.block = kwargs.get('BLOCK')
+        self.road = kwargs.get('ROAD')
+        self.postal_code = kwargs.get('POSTALCODE')
+        x = kwargs.get('XCOORD')
+        y = kwargs.get('YCOORD')
+        self.coordinates = (x, y)
+        lat = kwargs.get('LATITUDE')
+        long = kwargs.get('LONGITUDE')
+        self.lat_long = (lat, long)
+        super().__init__(**kwargs)
+
+
+class GeocodeInfo(BaseResource):
+
+    results = None
+
+    def __init__(self, **kwargs):
+        if 'GeocodeInfo' in kwargs:
+            results = kwargs.pop('GeocodeInfo')
+            self.results = [GeocodeInfoItem(**result) for result in results]
+        super().__init__(**kwargs)
+
+
 class RouteResult(BaseResource):
 
     status_message = None

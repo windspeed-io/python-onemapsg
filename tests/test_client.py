@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from onemapsg import exceptions, status, utils
+from onemapsg import exceptions, response, status
 from onemapsg.client import OneMap
 
 
@@ -90,7 +90,7 @@ def test_client_search(mock_request, mock_connect):
         data=data
     )
     search_result = OneMap('email@example.com', 'password').search('307987')
-    assert isinstance(search_result, utils.SearchResult)
+    assert isinstance(search_result, response.SearchResult)
 
 
 @patch('onemapsg.client.OneMap._connect')
@@ -144,7 +144,16 @@ def test_client_route(mock_request, mock_connect):
                 'CLEMENTI AVENUE 2',
                 'ULU PANDAN ROAD'
             ],
-            'route_geometry': 'yr`oAm`k{dEksAstD~e@iW`e@{UxtAqr@pd@sVrOmItC}GZ}GJwDeSmWkm@gb@qKuEyCwE}AgHJiH\\kE{BaRoCoEsGcLiE{N{AmQvB{QbFkN|E}FzMcPtQmTh|A_iBfCcDzHcKpJaMr\\w_@t\\i`@hb@gg@lAkJRqJg@wJeCoMgQ{f@qHsTuC_FiMsT_S_ViVkPkfAyi@oXiNq{@q_@qn@cU{SsGgEqAiDeAcTsGcd@eMoF{AoBi@uGkB}d@uMwDoA_EsA{QiG_VyJaSkLkQuN}CgDqJkKqDsFqE_H}CuE}CyEsBsGcDeKuK}f@}FiJ_FaEkKiEgHcAe~@xMsr@`LqMrB_En@gAy`@kBkVwE{W_^gbAkHg[aFeQaRe^_Nea@iEwYJkYsAyj@KiRkGglAcDqn@KiUrDkc@nFkY`Lo]lIeQfJgOfcAyhAzJ}KtPsTjIuQxFaQrBcN|E{u@rDgh@hBuYjDy_@zHoUbI}O|PwSkDuBiP_K{]cTq_Ack@ixAe|@_L}G{LoHynBujAsh@iZiRqK}|@ig@xg@wo@v{@_gA~q@g}@fUgZp^{`@gDqLv`@oNfTwH~LcIl@gEy@{PqU_V_`@cuAvHwJt^_MvXgMxCaD',
+            'route_geometry': (
+                'yr`oAm`k{dEksAstD~e@iW`e@{UxtAqr@pd@sVrOmItC}GZ}GJwDeSmWkm@gb@qKuEyCwE}AgHJiH\\'
+                'kE{BaRoCoEsGcLiE{N{AmQvB{QbFkN|E}FzMcPtQmTh|A_iBfCcDzHcKpJaMr\\w_@t\\i`@hb@gg@lA'
+                'kJRqJg@wJeCoMgQ{f@qHsTuC_FiMsT_S_ViVkPkfAyi@oXiNq{@q_@qn@cU{SsGgEqAiDeAcTsGcd@eM'
+                'oF{AoBi@uGkB}d@uMwDoA_EsA{QiG_VyJaSkLkQuN}CgDqJkKqDsFqE_H}CuE}CyEsBsGcDeKuK}f@}'
+                'FiJ_FaEkKiEgHcAe~@xMsr@`LqMrB_En@gAy`@kBkVwE{W_^gbAkHg[aFeQaRe^_Nea@iEw'
+                'YJkYsAyj@KiRkGglAcDqn@KiUrDkc@nFkY`Lo]lIeQfJgOfcAyhAzJ}KtPsTjIuQxFaQrBcN'
+                '|E{u@rDgh@hBuYjDy_@zHoUbI}O|PwSkDuBiP_K{]cTq_Ack@ixAe|@_L}G{LoHynBujAsh@iZi'
+                'RqK}|@ig@xg@wo@v{@_gA~q@g}@fUgZp^{`@gDqLv`@oNfTwH~LcIl@gEy@{PqU_V_`@cuAvHw'
+                'Jt^_MvXgMxCaD'),
             'route_instructions': [
                 [
                     '10',
@@ -197,9 +206,18 @@ def test_client_route(mock_request, mock_connect):
                 ],
                 'checksum': 585417468
             },
-            'alternative_geometries': [
-                'yr`oAm`k{dEksAstD~e@iW`e@{UxtAqr@pd@sVrOmItC}GZ}GJwDeSmWkm@gb@qKuEyCwE}AgHJiH\\kE{BaRoCoEsGcLiE{N{AmQvB{QbFkN|E}FzMcPtQmTh|A_iBfCcDzHcKpJaMr\\w_@t\\i`@hb@gg@lAkJRqJg@wJeCoMgQ{f@qHsTuC_FiMsT_S_ViVkPkfAyi@oXiNq{@q_@qn@cU{SsGgEqA~@wEzCgOvBiLzAqM\\mG@ad@UoQmC{^eDms@e@uJoAsXgAg^MgEe@sEuD__@qLstB}@ePIsCmAiq@zA_YjG_b@nB_HpHeWdK}UdkBqqD~A{CnAcCjA{BpIoPhAyBf_@gs@rb@uz@vC{F`CcFf`@sv@bEeMvGgVzEoQ~AyRrAyRe@mQ_E_XyDuWsJo}@gJsgAwByYcAmN?eDJ}Bh@cPnDuRtKs]~Ig[g_@oGg[aJqDY{FGkOdAqH`B{VrFok@bMsIlAcJNcJm@sImB{HiDej@ig@yDmD_CyB}v@qt@_TkQpf@yv@r_@kh@lF{MlDqM`AwN[cN}BqP{Uii@iI~DsFb@ih@cPeQaPaJ_NsIwEmV}KyMiBmKg@ae@}HkP}RgDoHwCwNkFWaY{E{Hj]uDjJcJhKia@n_@qFpL}g@uHcd@tLoBm[}GmJe`@eZub@qh@uHsa@_MuMsSiOvXgMxCaD'
-            ],
+            'alternative_geometries': [(
+                'yr`oAm`k{dEksAstD~e@iW`e@{UxtAqr@pd@sVrOmItC}GZ}GJwDeSmWkm@gb@qKuEyCwE}Ag'
+                'HJiH\\kE{BaRoCoEsGcLiE{N{AmQvB{QbFkN|E}FzMcPtQmTh|A_iBfCcDzHcKpJaMr\\w_@'
+                't\\i`@hb@gg@lAkJRqJg@wJeCoMgQ{f@qHsTuC_FiMsT_S_ViVkPkfAyi@oXiNq{@q_@qn@cU'
+                '{SsGgEqA~@wEzCgOvBiLzAqM\\mG@ad@UoQmC{^eDms@e@uJoAsXgAg^MgEe@sEuD__@qLstB}'
+                '@ePIsCmAiq@zA_YjG_b@nB_HpHeWdK}UdkBqqD~A{CnAcCjA{BpIoPhAyBf_@gs@rb@uz@vC'
+                '{F`CcFf`@sv@bEeMvGgVzEoQ~AyRrAyRe@mQ_E_XyDuWsJo}@gJsgAwByYcAmN?eDJ}Bh@cPn'
+                'DuRtKs]~Ig[g_@oGg[aJqDY{FGkOdAqH`B{VrFok@bMsIlAcJNcJm@sImB{HiDej@ig@yDmD'
+                '_CyB}v@qt@_TkQpf@yv@r_@kh@lF{MlDqM`AwN[cN}BqP{Uii@iI~DsFb@ih@cPeQaPaJ_NsI'
+                'wEmV}KyMiBmKg@ae@}HkP}RgDoHwCwNkFWaY{E{Hj]uDjJcJhKia@n_@qFpL}g@uHcd@tLoBm'
+                '[}GmJe`@eZub@qh@uHsa@_MuMsSiOvXgMxCaD'
+            )],
             'alternative_instructions': [
                 [
                     [
@@ -254,4 +272,33 @@ def test_client_route(mock_request, mock_connect):
         '1.01,1.23',
         'drive'
     )
-    assert isinstance(route_result, utils.RouteResult)
+    assert isinstance(route_result, response.RouteResult)
+
+
+@patch('onemapsg.client.OneMap._connect')
+@patch('onemapsg.client.make_request')
+def test_reverse_geocode_svy21(mock_request, mock_connect):
+    """Should return GeocodeInfo instance."""
+    mock_connect.return_value = None, None
+    mock_request.return_value = MagicMock(
+        status_code=status.HTTP_200_OK,
+        data={
+            "GeocodeInfo": [
+                {
+                    "BUILDINGNAME": "NEW TOWN PRIMARY SCHOOL",
+                    "BLOCK": "300",
+                    "ROAD": "TANGLIN HALT ROAD",
+                    "POSTALCODE": "148812",
+                    "XCOORD": "24303.327416",
+                    "YCOORD": "31333.331116",
+                    "LATITUDE": "1.2996418106402365",
+                    "LONGITUDE": "103.80011086725216",
+                    "LONGTITUDE": "103.80011086725216"
+                }
+            ]
+        }
+    )
+    geocode_info = OneMap('email@example.com', 'password').reverse_geocode_svy21(
+        (24291.97788882387, 31373.0117224489)
+    )
+    assert isinstance(geocode_info, response.GeocodeInfo)

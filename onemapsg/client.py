@@ -11,6 +11,7 @@ import inspect
 
 from . import exceptions, status, utils
 from .api import API
+from .response import GeocodeInfo
 from .utils import coerce_response, make_request
 
 
@@ -58,8 +59,12 @@ class OneMap:
                return_geometry=True,
                get_address_details=True,
                page_number=None):
-        """Returns search results with both latitude, longitude and x, y
-        coordinates of the searched location."""
+        """
+        Returns search results with both latitude, longitude and x, y
+        coordinates of the searched location.
+
+        Ref: https://docs.onemap.sg/#search
+        """
         name = inspect.stack()[0][3]
         return self.execute(name, search_val, return_geometry,
                             get_address_details, page_number)
@@ -69,8 +74,24 @@ class OneMap:
         Returns the distance and returns the drawn path between the specified
         start and end values depending on the route_type.
 
-        More info here: https://docs.onemap.sg/#routing-service
+        Ref: https://docs.onemap.sg/#routing-service
         """
         name = inspect.stack()[0][3]
         return self.execute(name, start, end, route_type,
                             public_transport_options, self.token)
+
+    def reverse_geocode_svy21(self, location: (float, float),
+                              buffer: int=10,
+                              address_type: str='all',
+                              other_features: bool=False) -> GeocodeInfo:
+        """
+        Retrieves a building address that lies within the defined buffer/radius of the specified x, y coordinates.
+
+        Road names are returned within 20m of the specified coordinates in JSON format.
+
+        Ref: https://docs.onemap.sg/#reverse-geocode-svy21
+        """
+        name = inspect.stack()[0][3]
+        return self.execute(name, location, self.token,
+                            buffer, address_type,
+                            other_features)

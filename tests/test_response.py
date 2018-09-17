@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from unittest.mock import patch
-
 import polyline
-import pytest
 
 from onemapsg import status
 from onemapsg.response import (
-    BaseResource, Response, RouteResult, SearchResult, SearchResultItem
+    BaseResource, GeocodeInfo, GeocodeInfoItem,
+    Response, RouteResult, SearchResult, SearchResultItem
 )
 
 
@@ -74,6 +72,7 @@ def test_search_result():
 
 
 def test_search_result_item():
+    """SearchResultItem should parse data properly into instance."""
     data = {
         'SEARCHVAL': 'REVENUE HOUSE',
         'BLK_NO': '55',
@@ -99,6 +98,7 @@ def test_search_result_item():
 
 
 def test_route_result():
+    """RouteResult should parse data into instance."""
     data = {
         'status_message': 'Found route between points',
         'alternative_names': [
@@ -111,7 +111,16 @@ def test_route_result():
             'CLEMENTI AVENUE 2',
             'ULU PANDAN ROAD'
         ],
-        'route_geometry': 'yr`oAm`k{dEksAstD~e@iW`e@{UxtAqr@pd@sVrOmItC}GZ}GJwDeSmWkm@gb@qKuEyCwE}AgHJiH\\kE{BaRoCoEsGcLiE{N{AmQvB{QbFkN|E}FzMcPtQmTh|A_iBfCcDzHcKpJaMr\\w_@t\\i`@hb@gg@lAkJRqJg@wJeCoMgQ{f@qHsTuC_FiMsT_S_ViVkPkfAyi@oXiNq{@q_@qn@cU{SsGgEqAiDeAcTsGcd@eMoF{AoBi@uGkB}d@uMwDoA_EsA{QiG_VyJaSkLkQuN}CgDqJkKqDsFqE_H}CuE}CyEsBsGcDeKuK}f@}FiJ_FaEkKiEgHcAe~@xMsr@`LqMrB_En@gAy`@kBkVwE{W_^gbAkHg[aFeQaRe^_Nea@iEwYJkYsAyj@KiRkGglAcDqn@KiUrDkc@nFkY`Lo]lIeQfJgOfcAyhAzJ}KtPsTjIuQxFaQrBcN|E{u@rDgh@hBuYjDy_@zHoUbI}O|PwSkDuBiP_K{]cTq_Ack@ixAe|@_L}G{LoHynBujAsh@iZiRqK}|@ig@xg@wo@v{@_gA~q@g}@fUgZp^{`@gDqLv`@oNfTwH~LcIl@gEy@{PqU_V_`@cuAvHwJt^_MvXgMxCaD',
+        'route_geometry': (
+            'yr`oAm`k{dEksAstD~e@iW`e@{UxtAqr@pd@sVrOmItC}GZ}GJwDeSmWkm@gb@qKuEyCwE}AgHJiH\\'
+            'kE{BaRoCoEsGcLiE{N{AmQvB{QbFkN|E}FzMcPtQmTh|A_iBfCcDzHcKpJaMr\\w_@t\\i`@hb@gg@lA'
+            'kJRqJg@wJeCoMgQ{f@qHsTuC_FiMsT_S_ViVkPkfAyi@oXiNq{@q_@qn@cU{SsGgEqAiDeAcTsGcd@eM'
+            'oF{AoBi@uGkB}d@uMwDoA_EsA{QiG_VyJaSkLkQuN}CgDqJkKqDsFqE_H}CuE}CyEsBsGcDeKuK}f@}'
+            'FiJ_FaEkKiEgHcAe~@xMsr@`LqMrB_En@gAy`@kBkVwE{W_^gbAkHg[aFeQaRe^_Nea@iEw'
+            'YJkYsAyj@KiRkGglAcDqn@KiUrDkc@nFkY`Lo]lIeQfJgOfcAyhAzJ}KtPsTjIuQxFaQrBcN'
+            '|E{u@rDgh@hBuYjDy_@zHoUbI}O|PwSkDuBiP_K{]cTq_Ack@ixAe|@_L}G{LoHynBujAsh@iZi'
+            'RqK}|@ig@xg@wo@v{@_gA~q@g}@fUgZp^{`@gDqLv`@oNfTwH~LcIl@gEy@{PqU_V_`@cuAvHw'
+            'Jt^_MvXgMxCaD'),
         'route_instructions': [
             [
                 '10',
@@ -164,9 +173,18 @@ def test_route_result():
             ],
             'checksum': 585417468
         },
-        'alternative_geometries': [
-            'yr`oAm`k{dEksAstD~e@iW`e@{UxtAqr@pd@sVrOmItC}GZ}GJwDeSmWkm@gb@qKuEyCwE}AgHJiH\\kE{BaRoCoEsGcLiE{N{AmQvB{QbFkN|E}FzMcPtQmTh|A_iBfCcDzHcKpJaMr\\w_@t\\i`@hb@gg@lAkJRqJg@wJeCoMgQ{f@qHsTuC_FiMsT_S_ViVkPkfAyi@oXiNq{@q_@qn@cU{SsGgEqA~@wEzCgOvBiLzAqM\\mG@ad@UoQmC{^eDms@e@uJoAsXgAg^MgEe@sEuD__@qLstB}@ePIsCmAiq@zA_YjG_b@nB_HpHeWdK}UdkBqqD~A{CnAcCjA{BpIoPhAyBf_@gs@rb@uz@vC{F`CcFf`@sv@bEeMvGgVzEoQ~AyRrAyRe@mQ_E_XyDuWsJo}@gJsgAwByYcAmN?eDJ}Bh@cPnDuRtKs]~Ig[g_@oGg[aJqDY{FGkOdAqH`B{VrFok@bMsIlAcJNcJm@sImB{HiDej@ig@yDmD_CyB}v@qt@_TkQpf@yv@r_@kh@lF{MlDqM`AwN[cN}BqP{Uii@iI~DsFb@ih@cPeQaPaJ_NsIwEmV}KyMiBmKg@ae@}HkP}RgDoHwCwNkFWaY{E{Hj]uDjJcJhKia@n_@qFpL}g@uHcd@tLoBm[}GmJe`@eZub@qh@uHsa@_MuMsSiOvXgMxCaD'
-        ],
+        'alternative_geometries': [(
+            'yr`oAm`k{dEksAstD~e@iW`e@{UxtAqr@pd@sVrOmItC}GZ}GJwDeSmWkm@gb@qKuEyCwE}Ag'
+            'HJiH\\kE{BaRoCoEsGcLiE{N{AmQvB{QbFkN|E}FzMcPtQmTh|A_iBfCcDzHcKpJaMr\\w_@'
+            't\\i`@hb@gg@lAkJRqJg@wJeCoMgQ{f@qHsTuC_FiMsT_S_ViVkPkfAyi@oXiNq{@q_@qn@cU'
+            '{SsGgEqA~@wEzCgOvBiLzAqM\\mG@ad@UoQmC{^eDms@e@uJoAsXgAg^MgEe@sEuD__@qLstB}'
+            '@ePIsCmAiq@zA_YjG_b@nB_HpHeWdK}UdkBqqD~A{CnAcCjA{BpIoPhAyBf_@gs@rb@uz@vC'
+            '{F`CcFf`@sv@bEeMvGgVzEoQ~AyRrAyRe@mQ_E_XyDuWsJo}@gJsgAwByYcAmN?eDJ}Bh@cPn'
+            'DuRtKs]~Ig[g_@oGg[aJqDY{FGkOdAqH`B{VrFok@bMsIlAcJNcJm@sImB{HiDej@ig@yDmD'
+            '_CyB}v@qt@_TkQpf@yv@r_@kh@lF{MlDqM`AwN[cN}BqP{Uii@iI~DsFb@ih@cPeQaPaJ_NsI'
+            'wEmV}KyMiBmKg@ae@}HkP}RgDoHwCwNkFWaY{E{Hj]uDjJcJhKia@n_@qFpL}g@uHcd@tLoBm'
+            '[}GmJe`@eZub@qh@uHsa@_MuMsSiOvXgMxCaD'
+        )],
         'alternative_instructions': [
             [
                 [
@@ -223,3 +241,45 @@ def test_route_result():
     assert route_result.lat_longs == polyline.decode(route_result.route_geometry)
     route_result.route_geometry = None
     assert route_result.lat_longs is None
+
+
+def test_geocode_info_item():
+    """GeocodeInfoItem should parse data into instance."""
+    data = {
+        "BUILDINGNAME": "NEW TOWN PRIMARY SCHOOL",
+        "BLOCK": "300",
+        "ROAD": "TANGLIN HALT ROAD",
+        "POSTALCODE": "148812",
+        "XCOORD": "24303.327416",
+        "YCOORD": "31333.331116",
+        "LATITUDE": "1.2996418106402365",
+        "LONGITUDE": "103.80011086725216",
+        "LONGTITUDE": "103.80011086725216"
+    }
+    geocode_info_item = GeocodeInfoItem(**data)
+    assert geocode_info_item.block == data['BLOCK']
+    assert geocode_info_item.building_name == data['BUILDINGNAME']
+    assert geocode_info_item.coordinates == (data['XCOORD'], data['YCOORD'])
+    assert geocode_info_item.lat_long == (data['LATITUDE'], data['LONGITUDE'])
+
+
+def test_geocode_info():
+    """GeocodeInfo should parse data into instance."""
+    data = {
+        "GeocodeInfo": [
+            {
+                "BUILDINGNAME": "NEW TOWN PRIMARY SCHOOL",
+                "BLOCK": "300",
+                "ROAD": "TANGLIN HALT ROAD",
+                "POSTALCODE": "148812",
+                "XCOORD": "24303.327416",
+                "YCOORD": "31333.331116",
+                "LATITUDE": "1.2996418106402365",
+                "LONGITUDE": "103.80011086725216",
+                "LONGTITUDE": "103.80011086725216"
+            }
+        ]
+    }
+    geocode_info = GeocodeInfo(**data)
+    assert len(geocode_info.results) == 1
+    assert isinstance(geocode_info.results[0], GeocodeInfoItem)

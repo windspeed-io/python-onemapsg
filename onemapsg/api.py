@@ -15,7 +15,8 @@ BASE_URL = 'https://developers.onemap.sg/'
 endpoints = dict(
     auth='privateapi/auth/post/getToken',
     search='commonapi/search',
-    route='privateapi/routingsvc/route'
+    route='privateapi/routingsvc/route',
+    reverse_geocode_svy21='privateapi/commonsvc/revgeocodexy'
 )
 
 
