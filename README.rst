@@ -14,7 +14,7 @@ Python Client for OneMap SG v2.
 
 Only supports Python 3.6 and up.
 
-This package is still work-in-progress. Please do not use it in production.
+This package can be used in production but is not fully featured yet.
 
 
 Getting Started
