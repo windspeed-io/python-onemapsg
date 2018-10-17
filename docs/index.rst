@@ -3,12 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Python OneMap SG's documentation!
-============================================
+Python OneMap SG
+================
+
+This package is a simple wrapper around OneMap SG's API.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   authentication
 
 
 
