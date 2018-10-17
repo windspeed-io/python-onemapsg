@@ -13,6 +13,8 @@ This package is a simple wrapper around OneMap SG's API.
    :caption: Contents:
 
    authentication
+   search
+   routing
 
 
 
