@@ -234,7 +234,7 @@ def test_route_result():
             0,
             159
         ],
-        'debugOutput': {
+        'debug_output': {
             'pathCalculationTime': 51,
             'pathTimes': [29, 16, 6],
             'precalculationTime': 87,
@@ -242,7 +242,7 @@ def test_route_result():
             'timedOut': False,
             'totalTime': 139
         },
-        'elevationMetadata': {
+        'elevation_metadata': {
             'ellipsoidToGeoidDifference': 7.473137315529,
             'geoidElevation': False
         },
@@ -337,7 +337,7 @@ def test_route_result():
                 'vertexType': 'NORMAL'
             }
         },
-        'requestParameters': {
+        'request_parameters': {
             'arriveBy': 'false',
             'date': '06-14-2019',
             'fromPlace': '1.320981,103.844150',
