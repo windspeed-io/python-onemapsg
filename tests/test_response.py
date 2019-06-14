@@ -233,7 +233,7 @@ def test_route_result():
         'alternative_indices': [
             0,
             159
-        ]
+        ],
         'debugOutput': {
             'pathCalculationTime': 51,
             'pathTimes': [29, 16, 6],
