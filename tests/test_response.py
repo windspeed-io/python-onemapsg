@@ -99,6 +99,8 @@ def test_search_result_item():
 
 def test_route_result():
     """RouteResult should parse data into instance."""
+    
+    # for routeType in ['walk', 'drive', 'cycle']
     data = {
         'status_message': 'Found route between points',
         'alternative_names': [
@@ -236,11 +238,141 @@ def test_route_result():
     route_result = RouteResult(**data)
     attrs = [x for x in dir(route_result) if not x.startswith('__')]
     for attr in attrs:
-        if attr != 'lat_longs' and attr != 'to_dict':
+        if attr != 'lat_longs' and attr != 'to_dict' and attr in data:
             assert getattr(route_result, attr) == data[attr]
     assert route_result.lat_longs == polyline.decode(route_result.route_geometry)
     route_result.route_geometry = None
     assert route_result.lat_longs is None
+    
+    # for routeType='pt'
+    data = {
+        'debugOutput': {
+            'pathCalculationTime': 51,
+            'pathTimes': [29, 16, 6],
+            'precalculationTime': 87,
+            'renderingTime': 1,
+            'timedOut': False,
+            'totalTime': 139
+        },
+        'elevationMetadata': {
+            'ellipsoidToGeoidDifference': 7.473137315529,
+            'geoidElevation': False
+        },
+        'plan': {
+            'date': 1560468900000,
+            'from': {
+                'lat': 1.320981,
+                'lon': 103.84415,
+                'name': 'Origin',
+                'orig': '',
+                'vertexType': 'NORMAL'
+            },
+            'itineraries': [
+                {
+                    'duration': 1023,
+                    'elevationGained': 0,
+                    'elevationLost': 0,
+                    'endTime': 1560470172000,
+                    'fare': '0.83',
+                    'legs': [
+                        {
+                            'agencyTimeZoneOffset': 28800000,
+                            'arrivalDelay': 0,
+                            'departureDelay': 0,
+                            'distance': 441.086,
+                            'duration': 396,
+                            'endTime': 1560469545000,
+                            'from': {
+                                'departure': 1560469149000,
+                                'lat': 1.320981,
+                                'lon': 103.84415,
+                                'name': 'Origin',
+                                'orig': '',
+                                'vertexType': 'NORMAL'
+                            },
+                            'interlineWithPreviousLeg': False,
+                            'intermediateStops': [],
+                            'legGeometry': {
+                                'length': 49,
+                                'points': 'i~`GsayxRCCPUMMMM@CFEHIPOBC@CA?@A\\Y@CnAmAHIBCDEDEDCDCJGFCJCFAHAFAD?FA`@Cl@GXCXCF?TCAGC[?EB?JCPA@A@A?AEa@UaAAMB?'
+                            },
+                            'mode': 'WALK',
+                            'numIntermediateStops': 1,
+                            'pathway': False,
+                            'realTime': False,
+                            'rentedBike': False,
+                            'route': '',
+                            'startTime': 1560469149000,
+                            'steps': [
+                                {
+                                    'absoluteDirection': 'SOUTHEAST',
+                                    'area': False,
+                                    'bogusName': False,
+                                    'distance': 441.086,
+                                    'elevation': [],
+                                    'lat': 1.3208561836374,
+                                    'lon': 103.84426705983,
+                                    'relativeDirection': 'DEPART',
+                                    'stayOn': False,
+                                    'streetName': 'path'
+                                }
+                            ],
+                            'to': {
+                                'arrival': 1560469545000,
+                                'departure': 1560469546000,
+                                'lat': 1.31875759946,
+                                'lon': 103.846554541,
+                                'name': 'REVIVAL CTR CH',
+                                'stopId': 'FERRY:50111',
+                                'stopIndex': 36,
+                                'stopSequence': 38,
+                                'vertexType': 'TRANSIT'
+                            },
+                            'transitLeg': False
+                        }
+                    ],
+                    'startTime': 1560469149000,
+                    'tooSloped': False,
+                    'transfers': 0,
+                    'transitTime': 538,
+                    'waitingTime': 2,
+                    'walkDistance': 545.83289472691,
+                    'walkLimitExceeded': False,
+                    'walkTime': 483
+                }
+            ],
+            'to': {
+                'lat': 1.326762,
+                'lon': 103.8559,
+                'name': 'Destination',
+                'orig': '',
+                'vertexType': 'NORMAL'
+            }
+        },
+        'requestParameters': {
+            'arriveBy': 'false',
+            'date': '06-14-2019',
+            'fromPlace': '1.320981,103.844150',
+            'maxTransfers': '3',
+            'maxWalkDistance': '1000',
+            'mode': 'TRANSIT,WALK',
+            'numItineraries': '3',
+            'otherThanPreferredRoutesPenalty': '0',
+            'preferredRoutes': '1__CC,1__DT,1__EW,1__NE,1__NS,1__PE,1__PW,1__SE,1__SS,1__SW,1__CG,1__BP',
+            'showIntermediateStops': 'true',
+            'time': '7:35am',
+            'toPlace': '1.326762,103.8559',
+            'transferPenalty': '7200',
+            'waitAtBeginningFactor': '0.5',
+            'walkReluctance': '2'
+        }
+    }
+    
+    route_result = RouteResult(**data)
+    attrs = [x for x in dir(route_result) if not x.startswith('__')]
+    for attr in attrs:
+        if attr != 'lat_longs' and attr != 'to_dict' and attr in data:
+            assert getattr(route_result, attr) == data[attr]
 
 
 def test_geocode_info_item():
