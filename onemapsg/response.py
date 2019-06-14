@@ -124,12 +124,15 @@ class RouteResult(BaseResource):
     alternative_indices = None
     
     # for routeType='pt'
-    requestparameters = None
+    requestParameters = None
     plan = None
-    debugoutput = None
-    elevationmetadata = None
+    debugOutput = None
+    elevationMetadata = None
 
     def __init__(self, **kwargs):
+        self.request_parameters = kwargs.get('requestParameters')
+        self.debug_output = kwargs.get('debugOutput')
+        self.elevation_metadata = kwargs.get('elevationMetadata')
         super().__init__(**kwargs)
 
     @property
