@@ -234,18 +234,6 @@ def test_route_result():
             0,
             159
         ]
-    }
-    route_result = RouteResult(**data)
-    attrs = [x for x in dir(route_result) if not x.startswith('__')]
-    for attr in attrs:
-        if attr != 'lat_longs' and attr != 'to_dict' and attr in data:
-            assert getattr(route_result, attr) == data[attr]
-    assert route_result.lat_longs == polyline.decode(route_result.route_geometry)
-    route_result.route_geometry = None
-    assert route_result.lat_longs is None
-    
-    # for routeType='pt'
-    data = {
         'debugOutput': {
             'pathCalculationTime': 51,
             'pathTimes': [29, 16, 6],
@@ -367,12 +355,14 @@ def test_route_result():
             'walkReluctance': '2'
         }
     }
-    
     route_result = RouteResult(**data)
     attrs = [x for x in dir(route_result) if not x.startswith('__')]
     for attr in attrs:
-        if attr != 'lat_longs' and attr != 'to_dict' and attr in data:
+        if attr != 'lat_longs' and attr != 'to_dict':
             assert getattr(route_result, attr) == data[attr]
+    assert route_result.lat_longs == polyline.decode(route_result.route_geometry)
+    route_result.route_geometry = None
+    assert route_result.lat_longs is None
 
 
 def test_geocode_info_item():
