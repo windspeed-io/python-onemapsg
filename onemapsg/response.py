@@ -106,6 +106,7 @@ class GeocodeInfo(BaseResource):
 
 class RouteResult(BaseResource):
 
+    # for routeType in ['walk', 'drive', 'cycle']
     status_message = None
     alternative_names = None
     route_name = None
@@ -121,8 +122,17 @@ class RouteResult(BaseResource):
     alternative_geometries = None
     alternative_instructions = None
     alternative_indices = None
+    
+    # for routeType='pt'
+    request_parameters = None
+    plan = None
+    debug_output = None
+    elevation_metadata = None
 
     def __init__(self, **kwargs):
+        self.request_parameters = kwargs.get('requestParameters')
+        self.debug_output = kwargs.get('debugOutput')
+        self.elevation_metadata = kwargs.get('elevationMetadata')
         super().__init__(**kwargs)
 
     @property
