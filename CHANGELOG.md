@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.5] - 2019-06-15
+### Fixed
+* `RouteResponse` for `pt` route type ([@imoea](https://github.com/imoea) in [#15](https://github.com/windspeed-io/python-onemapsg/pull/15))
 
 ## [0.0.4] - 2018-09-23
 ### Fixed
