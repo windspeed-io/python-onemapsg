@@ -18,7 +18,7 @@ setup(
     url='https://github.com/windspeed-io/python-onemapsg',
     license='MIT',
     install_requires=[
-        'requests>=2.19.1',
+        'requests>=2.20.0',
         'polyline>=1.3.2'
     ],
     include_package_data=True,
