@@ -129,7 +129,7 @@ def test_client_search_server_error(mock_request, mock_connect):
 @patch('onemapsg.client.make_request')
 def test_client_route(mock_request, mock_connect):
     """Should return RouteResult instance."""
-    mock_connect.return_value = None, None
+    mock_connect.return_value = "some-token", 1234567
     mock_request.return_value = MagicMock(
         status_code=status.HTTP_200_OK,
         data={
@@ -279,7 +279,7 @@ def test_client_route(mock_request, mock_connect):
 @patch('onemapsg.client.make_request')
 def test_reverse_geocode_svy21(mock_request, mock_connect):
     """Should return GeocodeInfo instance."""
-    mock_connect.return_value = None, None
+    mock_connect.return_value = "some-token", 1234567
     mock_request.return_value = MagicMock(
         status_code=status.HTTP_200_OK,
         data={
@@ -309,7 +309,7 @@ def test_reverse_geocode_svy21(mock_request, mock_connect):
 @patch('onemapsg.client.make_request')
 def test_reverse_geocode_wsg84(mock_request, mock_connect):
     """Should return GeocodeInfo instance."""
-    mock_connect.return_value = None, None
+    mock_connect.return_value = "some-token", 1234567
     mock_request.return_value = MagicMock(
         status_code=status.HTTP_200_OK,
         data={
