@@ -8,6 +8,31 @@ from onemapsg import exceptions, response, status
 from onemapsg.client import OneMap
 
 
+def test_client_noauth():
+    """Client should instantiate without credentials."""
+    onemap = OneMap()
+    assert onemap.token is None
+    assert onemap.token_expiry is None
+
+
+@patch('onemapsg.client.make_request')
+def test_client_authenticate(mock_request):
+    """Client should successfully attach token and toke_expiry
+    after instantiation via the `authenticate` method."""
+    mock_request.return_value = MagicMock(
+        status_code=status.HTTP_200_OK,
+        data={
+            'access_token': 'sometoken',
+            'expiry_timestamp': '123456'
+        }
+    )
+    onemap = OneMap()
+    onemap.authenticate('email@example.com', 'password')
+    assert onemap.token == 'sometoken'
+    assert onemap.token_expiry == '123456'
+
+
+
 @patch('onemapsg.client.make_request')
 def test_client_connect(mock_request):
     """Client should return a OneMap instance with token and
@@ -45,6 +70,18 @@ def test_client_connect_error_server_error(mock_request):
     with pytest.raises(exceptions.ServerError) as err:
         OneMap('email@example.com', 'password')
         assert str(err) == 'OneMap SG server error. Please try again later.'
+
+
+def test_client_execute_protected_noauth():
+    """Client should raise an error when trying to make a request
+    to a protected API when no credentials are provided."""
+    with pytest.raises(exceptions.AuthenticationError) as err:
+        onemap = OneMap()
+        onemap.route(
+            '1.23,1.01',
+            '1.01,1.23',
+            'drive'
+        )
 
 
 @patch('onemapsg.client.OneMap._connect')
@@ -129,7 +166,7 @@ def test_client_search_server_error(mock_request, mock_connect):
 @patch('onemapsg.client.make_request')
 def test_client_route(mock_request, mock_connect):
     """Should return RouteResult instance."""
-    mock_connect.return_value = None, None
+    mock_connect.return_value = "some-token", 1234567
     mock_request.return_value = MagicMock(
         status_code=status.HTTP_200_OK,
         data={
@@ -279,7 +316,7 @@ def test_client_route(mock_request, mock_connect):
 @patch('onemapsg.client.make_request')
 def test_reverse_geocode_svy21(mock_request, mock_connect):
     """Should return GeocodeInfo instance."""
-    mock_connect.return_value = None, None
+    mock_connect.return_value = "some-token", 1234567
     mock_request.return_value = MagicMock(
         status_code=status.HTTP_200_OK,
         data={
@@ -309,7 +346,7 @@ def test_reverse_geocode_svy21(mock_request, mock_connect):
 @patch('onemapsg.client.make_request')
 def test_reverse_geocode_wsg84(mock_request, mock_connect):
     """Should return GeocodeInfo instance."""
-    mock_connect.return_value = None, None
+    mock_connect.return_value = "some-token", 1234567
     mock_request.return_value = MagicMock(
         status_code=status.HTTP_200_OK,
         data={
