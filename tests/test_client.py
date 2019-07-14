@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import datetime
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -29,7 +30,7 @@ def test_client_authenticate(mock_request):
     onemap = OneMap()
     onemap.authenticate('email@example.com', 'password')
     assert onemap.token == 'sometoken'
-    assert onemap.token_expiry == '123456'
+    assert onemap.token_expiry == 123456
 
 
 
@@ -46,7 +47,7 @@ def test_client_connect(mock_request):
     )
     onemap = OneMap('email@example.com', 'password')
     assert onemap.token == 'sometoken'
-    assert onemap.token_expiry == '123456'
+    assert onemap.token_expiry == 123456
 
 
 @patch('onemapsg.client.make_request')
@@ -83,6 +84,164 @@ def test_client_execute_protected_noauth():
             'drive'
         )
 
+@patch('onemapsg.client.make_request')
+def test_client_refresh_token(mock_request):
+    """Client should retrieve a new token when making a request
+    and existing token is less than 2 minutes from expiring."""
+    mock_current_time = int(datetime.datetime.now().strftime('%s'))
+    mock_request.return_value = MagicMock(
+        status_code=status.HTTP_200_OK,
+        data={
+            'access_token': 'some-token',
+            'expiry_timestamp': mock_current_time + 60  # within 2 minutes
+        }
+    )
+    onemap = OneMap('email@example.com', 'password')
+    with patch.object(onemap, 'authenticate') as mock_authenticate:
+        data = {
+            'status_message': 'Found route between points',
+            'alternative_names': [
+                [
+                    'COMMONWEALTH AVENUE WEST',
+                    'NORTH BUONA VISTA ROAD'
+                ]
+            ],
+            'route_name': [
+                'CLEMENTI AVENUE 2',
+                'ULU PANDAN ROAD'
+            ],
+            'route_geometry': (
+                'yr`oAm`k{dEksAstD~e@iW`e@{UxtAqr@pd@sVrOmItC}GZ}GJwDeSmWkm@gb@qKuEyCwE}AgHJiH\\'
+                'kE{BaRoCoEsGcLiE{N{AmQvB{QbFkN|E}FzMcPtQmTh|A_iBfCcDzHcKpJaMr\\w_@t\\i`@hb@gg@lA'
+                'kJRqJg@wJeCoMgQ{f@qHsTuC_FiMsT_S_ViVkPkfAyi@oXiNq{@q_@qn@cU{SsGgEqAiDeAcTsGcd@eM'
+                'oF{AoBi@uGkB}d@uMwDoA_EsA{QiG_VyJaSkLkQuN}CgDqJkKqDsFqE_H}CuE}CyEsBsGcDeKuK}f@}'
+                'FiJ_FaEkKiEgHcAe~@xMsr@`LqMrB_En@gAy`@kBkVwE{W_^gbAkHg[aFeQaRe^_Nea@iEw'
+                'YJkYsAyj@KiRkGglAcDqn@KiUrDkc@nFkY`Lo]lIeQfJgOfcAyhAzJ}KtPsTjIuQxFaQrBcN'
+                '|E{u@rDgh@hBuYjDy_@zHoUbI}O|PwSkDuBiP_K{]cTq_Ack@ixAe|@_L}G{LoHynBujAsh@iZi'
+                'RqK}|@ig@xg@wo@v{@_gA~q@g}@fUgZp^{`@gDqLv`@oNfTwH~LcIl@gEy@{PqU_V_`@cuAvHw'
+                'Jt^_MvXgMxCaD'),
+            'route_instructions': [
+                [
+                    '10',
+                    'PANDAN LOOP',
+                    853,
+                    0,
+                    89,
+                    '853m',
+                    'NE',
+                    65,
+                    1,
+                    'SW',
+                    245
+                ]
+            ],
+            'alternative_summaries': [
+                {
+                    'end_point': 'REBECCA ROAD',
+                    'start_point': 'PANDAN LOOP',
+                    'total_time': 761,
+                    'total_distance': 8133
+                }
+            ],
+            'via_points': [
+                [
+                    1.311549,
+                    103.749657
+                ],
+                [
+                    1.32036,
+                    103.800156
+                ]
+            ],
+            'route_summary': {
+                'end_point': 'REBECCA ROAD',
+                'start_point': 'PANDAN LOOP',
+                'total_time': 740,
+                'total_distance': 7957
+            },
+            'found_alternative': True,
+            'status': 200,
+            'via_indices': [
+                0,
+                140
+            ],
+            'hint_data': {
+                'locations': [
+                    'NzgBANtqAQBRBQAAAAAAAAQAAAAAAAAAuQIAAEOcAABoAAAAPQMUABcYLwYAAAEB',
+                    '0OUAAF4zAQChAwAABAAAAAwAAABIAAAAdQAAACx9AABoAAAAqCUUAFndLwYCAAEB'
+                ],
+                'checksum': 585417468
+            },
+            'alternative_geometries': [(
+                'yr`oAm`k{dEksAstD~e@iW`e@{UxtAqr@pd@sVrOmItC}GZ}GJwDeSmWkm@gb@qKuEyCwE}Ag'
+                'HJiH\\kE{BaRoCoEsGcLiE{N{AmQvB{QbFkN|E}FzMcPtQmTh|A_iBfCcDzHcKpJaMr\\w_@'
+                't\\i`@hb@gg@lAkJRqJg@wJeCoMgQ{f@qHsTuC_FiMsT_S_ViVkPkfAyi@oXiNq{@q_@qn@cU'
+                '{SsGgEqA~@wEzCgOvBiLzAqM\\mG@ad@UoQmC{^eDms@e@uJoAsXgAg^MgEe@sEuD__@qLstB}'
+                '@ePIsCmAiq@zA_YjG_b@nB_HpHeWdK}UdkBqqD~A{CnAcCjA{BpIoPhAyBf_@gs@rb@uz@vC'
+                '{F`CcFf`@sv@bEeMvGgVzEoQ~AyRrAyRe@mQ_E_XyDuWsJo}@gJsgAwByYcAmN?eDJ}Bh@cPn'
+                'DuRtKs]~Ig[g_@oGg[aJqDY{FGkOdAqH`B{VrFok@bMsIlAcJNcJm@sImB{HiDej@ig@yDmD'
+                '_CyB}v@qt@_TkQpf@yv@r_@kh@lF{MlDqM`AwN[cN}BqP{Uii@iI~DsFb@ih@cPeQaPaJ_NsI'
+                'wEmV}KyMiBmKg@ae@}HkP}RgDoHwCwNkFWaY{E{Hj]uDjJcJhKia@n_@qFpL}g@uHcd@tLoBm'
+                '[}GmJe`@eZub@qh@uHsa@_MuMsSiOvXgMxCaD'
+            )],
+            'alternative_instructions': [
+                [
+                    [
+                        '10',
+                        'PANDAN LOOP',
+                        853,
+                        0,
+                        89,
+                        '853m',
+                        'NE',
+                        65,
+                        1,
+                        'SW',
+                        245
+                    ],
+                    [
+                        '8',
+                        'JALAN BUROH',
+                        217,
+                        9,
+                        23,
+                        '217m',
+                        'NE',
+                        50,
+                        1,
+                        'SW',
+                        230
+                    ],
+                    [
+                        '1',
+                        'WEST COAST HIGHWAY',
+                        62,
+                        14,
+                        7,
+                        '61m',
+                        'E',
+                        92,
+                        1,
+                        'W',
+                        272
+                    ]
+                ]
+            ],
+            'alternative_indices': [
+                0,
+                159
+            ]
+        }
+        mock_request.return_value = MagicMock(
+            status_code=status.HTTP_200_OK,
+            data=data
+        )
+        onemap.route(
+            '1.23,1.01',
+            '1.01,1.23',
+            'drive'
+        )
+        mock_authenticate.assert_called_once()
 
 @patch('onemapsg.client.OneMap._connect')
 @patch('onemapsg.client.make_request')

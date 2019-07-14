@@ -7,6 +7,7 @@ onemapsg.client
 This module contains the OneMap SG Client.
 """
 
+import datetime
 import inspect
 
 from . import exceptions, status, utils
@@ -22,19 +23,32 @@ class OneMap:
 
     def __init__(self, email = None, password = None):
         if email is not None and password is not None:
-            self.token, self.token_expiry = self._connect(email, password)
+            self._email = email
+            self._password = password
+            self.token, self.token_expiry = self._connect()
+
+    @property
+    def email(self):
+        return self._email
+
+    @property
+    def password(self):
+        return self._password
 
     def authenticate(self, email, password):
         """This can be used after instantiating the client to authenticate,
         if needed. This is mostly to be backwards compatible with the old
         _connect. We'll probably deprecate _connect at some point in favour
         of this."""
-        self.token, self.token_expiry = self._connect(email, password)
 
-    def _connect(self, email, password):
+        self._email = email
+        self._password = password
+        self.token, self.token_expiry = self._connect()
+
+    def _connect(self):
         """Retrieves token and stores it. Each token is valid
         for 3 days."""
-        login_details = {'email': email, 'password': password}
+        login_details = {'email': self.email, 'password': self.password}
         response = make_request(
             API.auth,
             method='post',
@@ -42,7 +56,7 @@ class OneMap:
         )
         if response.status_code == status.HTTP_200_OK:
             return (response.data['access_token'],
-                    response.data['expiry_timestamp'])
+                    int(response.data['expiry_timestamp']))
         elif status.is_client_error(response.status_code):
             raise exceptions.AuthenticationError('Failed to authenticate.')
         elif status.is_server_error(response.status_code):
@@ -50,6 +64,8 @@ class OneMap:
                                          'Please try again later.')
 
     def execute(self, action_type, *args, **kwargs):
+        # If endpoint is private, then we need to make
+        # sure that client credentials are provided.
         endpoint = getattr(API, action_type, '')
         if 'privateapi' in endpoint and \
             self.token is None and \
@@ -58,6 +74,15 @@ class OneMap:
                 'This call requires authentication, please call authenticate() '
                 'with a valid username and password.'
             )
+
+        # If token is going to expire within 2 minutes, get a new one
+        if 'privateapi' in endpoint and \
+            self.token is not None and \
+            self.token_expiry is not None:
+            current_unix_timestamp = int(datetime.datetime.now().strftime('%s'))
+            if self.token_expiry - current_unix_timestamp < 120:
+                self.authenticate(self.email, self.password)
+
         callback = getattr(utils, f'construct_{action_type}_query')
         url = callback(*args, **kwargs)
         response = make_request(url)
