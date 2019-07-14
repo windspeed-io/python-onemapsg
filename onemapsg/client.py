@@ -17,8 +17,19 @@ from .utils import coerce_response, make_request
 
 class OneMap:
 
-    def __init__(self, email, password):
-        self.token, self.token_expiry = self._connect(email, password)
+    token = None
+    token_expiry = None
+
+    def __init__(self, email = None, password = None):
+        if email is not None and password is not None:
+            self.token, self.token_expiry = self._connect(email, password)
+
+    def authenticate(self, email, password):
+        """This can be used after instantiating the client to authenticate,
+        if needed. This is mostly to be backwards compatible with the old
+        _connect. We'll probably deprecate _connect at some point in favour
+        of this."""
+        return self._connect(email, password)
 
     def _connect(self, email, password):
         """Retrieves token and stores it. Each token is valid
@@ -39,6 +50,14 @@ class OneMap:
                                          'Please try again later.')
 
     def execute(self, action_type, *args, **kwargs):
+        endpoint = getattr(API, action_type, '')
+        if endpoint.startswith('privateapi') and \
+            self.token is None and \
+            self.token_expiry is None:
+            raise exceptions.AuthenticationError(
+                'This call requires authentication, please call authenticate() '
+                'with a valid username and password.'
+            )
         callback = getattr(utils, f'construct_{action_type}_query')
         url = callback(*args, **kwargs)
         response = make_request(url)
