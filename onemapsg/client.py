@@ -29,7 +29,7 @@ class OneMap:
         if needed. This is mostly to be backwards compatible with the old
         _connect. We'll probably deprecate _connect at some point in favour
         of this."""
-        return self._connect(email, password)
+        self.token, self.token_expiry = self._connect(email, password)
 
     def _connect(self, email, password):
         """Retrieves token and stores it. Each token is valid
@@ -51,7 +51,7 @@ class OneMap:
 
     def execute(self, action_type, *args, **kwargs):
         endpoint = getattr(API, action_type, '')
-        if endpoint.startswith('privateapi') and \
+        if 'privateapi' in endpoint and \
             self.token is None and \
             self.token_expiry is None:
             raise exceptions.AuthenticationError(
