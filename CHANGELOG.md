@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2019-07-14
+### Fixed
+* Client now doesn't require username / password to instantiate. This allows usage of public APIs like search without providing credentials. ([@thomasjiangcy](https://github.com/thomasjiangcy) in [#17](https://github.com/windspeed-io/python-onemapsg/pull/17))
+
 ## [0.0.5] - 2019-06-15
 ### Fixed
 * `RouteResponse` for `pt` route type ([@imoea](https://github.com/imoea) in [#15](https://github.com/windspeed-io/python-onemapsg/pull/15))
