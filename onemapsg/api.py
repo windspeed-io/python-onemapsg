@@ -10,15 +10,15 @@ This module contains the static API endpoints of `OneMap SG`_.
 https://docs.onemap.sg/
 """
 
-BASE_URL = 'https://developers.onemap.sg/'
+BASE_URL: str = "https://developers.onemap.sg/"
 
-endpoints = dict(
-    auth='privateapi/auth/post/getToken',
-    search='commonapi/search',
-    route='privateapi/routingsvc/route',
-    reverse_geocode='privateapi/commonsvc/revgeocodexy',
-    reverse_geocode_wgs84='privateapi/commonsvc/revgeocodexy',
-    reverse_geocode_svy21='privateapi/commonsvc/revgeocodexy'
+endpoints: dict = dict(
+    auth="privateapi/auth/post/getToken",
+    search="commonapi/search",
+    route="privateapi/routingsvc/route",
+    reverse_geocode="privateapi/commonsvc/revgeocodexy",
+    reverse_geocode_wgs84="privateapi/commonsvc/revgeocodexy",
+    reverse_geocode_svy21="privateapi/commonsvc/revgeocodexy",
 )
 
 
@@ -28,9 +28,16 @@ class APISingleton:
     base URL.
     """
 
-    def __init__(self):
+    auth: str
+    search: str
+    route: str
+    reverse_geocode: str
+    reverse_geocode_svy21: str
+    reverse_geocode_wgs84: str
+
+    def __init__(self) -> None:
         for k, v in endpoints.items():
-            setattr(self, k, f'{BASE_URL}{v}')
+            setattr(self, k, f"{BASE_URL}{v}")
 
 
-API = APISingleton()
+API: APISingleton = APISingleton()
