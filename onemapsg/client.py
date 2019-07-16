@@ -17,7 +17,12 @@ from .utils import coerce_response, make_request
 
 
 class OneMap:
+    """
+    Main API Client to interact with OneMap's API.
+    """
 
+    _email = None
+    _password = None
     token = None
     token_expiry = None
 
