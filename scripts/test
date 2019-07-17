@@ -1,0 +1,5 @@
+#!/bin/bash
+
+pytest tests \
+    -W ignore::DeprecationWarning \
+    --cov=onemapsg

@@ -1,0 +1,72 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+PWD=`pwd`
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+NC='\033[0m' # No Color
+
+#Lets Define some soubroutines
+yell() { echo -e "${RED}$0: $*${NC}" >&2; }
+die() { yell "$*";  exit 77; }
+try() { "$@" || die "Error in command '$*'"  ;}
+success() { echo -e "${GREEN}${*:-success}${NC}" ;}
+warning() { echo -e "${YELLOW}$*${NC}" ;}
+cont() { echo ; warning "Error occured but we can continue. Please re-check problems manually." ; }
+
+DEV_DIR=$(dirname $0)
+SCRIPT_DIR=$(dirname $DEV_DIR)
+PROJECT_ROOT=$(dirname $SCRIPT_DIR)
+
+# project root
+trap "cd $PROJECT_ROOT" INT HUP TERM QUIT
+
+echo "Run mypy"
+try mypy \
+    onemapsg \
+    --ignore-missing-imports \
+    --disallow-untyped-defs
+success
+
+echo "Run black"
+try black \
+    onemapsg \
+    tests
+success
+
+echo "Run autoflake"
+try autoflake \
+    --in-place \
+    --remove-unused-variables \
+    --recursive \
+    onemapsg \
+    tests
+success
+
+echo "Run flake8"
+try flake8 \
+    onemapsg \
+    tests \
+    --max-line-length=88 \
+    --ignore=W503
+success
+
+echo "Run isort"
+try isort \
+  --atomic \
+  --recursive \
+  --apply \
+  onemapsg \
+  tests
+success
+
+echo "Run mypy again"
+try mypy \
+    onemapsg \
+    --ignore-missing-imports \
+    --disallow-untyped-defs
+success

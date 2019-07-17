@@ -1,4 +1,8 @@
+autoflake==1.3
+black==19.3b0
+flake8==3.7.8
 isort==4.3.4
+mypy==0.720
 polyline==1.3.2
 pytest==3.7.4
 pytest-cov==2.5.1
