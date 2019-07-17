@@ -1,0 +1,24 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+autoflake = "*"
+black = "*"
+isort = "*"
+mypy = "*"
+pytest = "*"
+pytest-cov = "*"
+python-coveralls = "*"
+flake8 = "*"
+
+[packages]
+polyline = "*"
+requests = "*"
+
+[requires]
+python_version = "3.6"
+
+[pipenv]
+allow_prereleases = true
