@@ -68,9 +68,7 @@ def test_client_connect_error_server_error(mock_request):
 def test_client_connect_return_none(mock_request):
     """Token and token_expiry should be None when response from authentication
     endpoint is not 200, 4xx or 5xx"""
-    mock_request.return_value = MagicMock(
-        status_code=status.HTTP_301_MOVED_PERMANENTLY
-    )
+    mock_request.return_value = MagicMock(status_code=status.HTTP_301_MOVED_PERMANENTLY)
     onemap = OneMap("email@example.com", "password")
     assert onemap.token is None
     assert onemap.token_expiry is None
@@ -88,9 +86,7 @@ def test_client_execute_protected_noauth():
 def test_client_execute_return_none(mock_request):
     """Client should return None when an execute() call
     gets a response status that isn't 2xx, 4xx or 5xx"""
-    mock_request.return_value = MagicMock(
-        status_code=status.HTTP_301_MOVED_PERMANENTLY
-    )
+    mock_request.return_value = MagicMock(status_code=status.HTTP_301_MOVED_PERMANENTLY)
     onemap = OneMap()
     res = onemap.execute("search", "123456", True, True, None)
     assert res is None
@@ -260,9 +256,7 @@ def test_client_search_server_error(mock_request, mock_connect):
 @patch("onemapsg.client.make_request")
 def test_client_search_return_none(mock_request, mock_connect):
     mock_connect.return_value = None, None
-    mock_request.return_value = MagicMock(
-        status_code=status.HTTP_301_MOVED_PERMANENTLY
-    )
+    mock_request.return_value = MagicMock(status_code=status.HTTP_301_MOVED_PERMANENTLY)
     onemap = OneMap("email@example.com", "password")
     res = onemap.search("123456")
     assert res is None
@@ -355,9 +349,7 @@ def test_client_route(mock_request, mock_connect):
 @patch("onemapsg.client.make_request")
 def test_client_route_return_none(mock_request, mock_connect):
     mock_connect.return_value = "some-token", 1234567
-    mock_request.return_value = MagicMock(
-        status_code=status.HTTP_301_MOVED_PERMANENTLY
-    )
+    mock_request.return_value = MagicMock(status_code=status.HTTP_301_MOVED_PERMANENTLY)
     onemap = OneMap("email@example.com", "password")
     res = onemap.route("1.23,1.01", "1.01,1.23", "drive")
     assert res is None
@@ -421,18 +413,13 @@ def test_reverse_geocode_wsg84(mock_request, mock_connect):
     assert isinstance(geocode_info, response.GeocodeInfo)
 
 
-
 @patch("onemapsg.client.OneMap._connect")
 @patch("onemapsg.client.make_request")
 def test_reverse_geocode_return_none(mock_request, mock_connect):
     """Should return GeocodeInfo instance."""
     mock_connect.return_value = "some-token", 1234567
-    mock_request.return_value = MagicMock(
-        status_code=status.HTTP_301_MOVED_PERMANENTLY,
-    )
+    mock_request.return_value = MagicMock(status_code=status.HTTP_301_MOVED_PERMANENTLY)
     geocode_info = OneMap("email@example.com", "password").reverse_geocode(
         "wgs84", (1.3, 103.8)
     )
     assert geocode_info is None
-
-
