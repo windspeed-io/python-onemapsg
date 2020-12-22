@@ -99,8 +99,11 @@ class OneMap:
                 self.authenticate(self.email, self.password)
 
         callback: Callable = getattr(utils, f"construct_{action_type}_query")
+        request_kwargs: dict = dict()
+        if "timeout" in kwargs:
+            request_kwargs["timeout"] = kwargs.pop("timeout")
         url: str = callback(*args, **kwargs)
-        response: Response = make_request(url)
+        response: Response = make_request(url, **request_kwargs)
         if response.status_code == status.HTTP_200_OK:
             cls_callback: Callable = getattr(utils, f"get_{action_type}_class")
             cls: Any = cls_callback()
@@ -122,6 +125,7 @@ class OneMap:
         return_geometry: bool = True,
         get_address_details: bool = True,
         page_number: Optional[int] = None,
+        timeout: int = 15,
     ) -> Optional[SearchResult]:
         """
         Returns search results with both latitude, longitude and x, y
@@ -131,7 +135,12 @@ class OneMap:
         """
         name: str = inspect.stack()[0][3]
         search_result: Optional[Any] = self.execute(
-            name, search_val, return_geometry, get_address_details, page_number
+            name,
+            search_val,
+            return_geometry,
+            get_address_details,
+            page_number,
+            timeout=timeout,
         )
         if isinstance(search_result, SearchResult):
             return search_result
@@ -143,6 +152,7 @@ class OneMap:
         end: str,
         route_type: str,
         public_transport_options: Optional[str] = None,
+        timeout: int = 15,
     ) -> Optional[RouteResult]:
         """
         Returns the distance and returns the drawn path between the specified
@@ -152,7 +162,13 @@ class OneMap:
         """
         name: str = inspect.stack()[0][3]
         route_result: Optional[Any] = self.execute(
-            name, start, end, route_type, public_transport_options, self.token
+            name,
+            start,
+            end,
+            route_type,
+            public_transport_options,
+            self.token,
+            timeout=timeout,
         )
         if isinstance(route_result, RouteResult):
             return route_result
@@ -165,6 +181,7 @@ class OneMap:
         buffer: int = 10,
         address_type: str = "all",
         other_features: bool = False,
+        timeout: int = 15,
     ) -> Optional[GeocodeInfo]:
         """
         Retrieves a building address that lies within the defined buffer/radius of
@@ -181,7 +198,13 @@ class OneMap:
         name: str = inspect.stack()[0][3]
         name = name + f"_{reverse_type}"
         reverse_geocode_result: Optional[Any] = self.execute(
-            name, location, self.token, buffer, address_type, other_features
+            name,
+            location,
+            self.token,
+            buffer,
+            address_type,
+            other_features,
+            timeout=timeout,
         )
         if isinstance(reverse_geocode_result, GeocodeInfo):
             return reverse_geocode_result

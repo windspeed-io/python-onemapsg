@@ -38,7 +38,7 @@ def to_dict(obj: Any) -> dict:
 
 
 def make_request(
-    endpoint: str, method: str = "get", data: Optional[dict] = None
+    endpoint: str, method: str = "get", data: Optional[dict] = None, timeout: int = 15
 ) -> Response:
     """Makes a request to the given endpoint and maps the response
     to a Response class"""
@@ -49,9 +49,9 @@ def make_request(
 
     r: RequestsResponse
     if method not in SAFE_METHODS:
-        r = request_method(endpoint, json=data)
+        r = request_method(endpoint, json=data, timeout=timeout)
     else:
-        r = request_method(endpoint)
+        r = request_method(endpoint, timeout=timeout)
     return Response(status_code=r.status_code, data=r.json())
 
 
